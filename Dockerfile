@@ -1,19 +1,14 @@
-# Use the official Ubuntu image
-FROM ubuntu:20.04
+# Use a lightweight base image.
+FROM alpine:latest
 
-# Install OpenSSH server
-RUN apt-get update && apt-get install -y \
-    openssh-server \
-    && mkdir /var/run/sshd
+# Install tmate and necessary packages.
+RUN apk add --no-cache tmate openssh-client
 
-# Create a new user with password
-RUN useradd -m -s /bin/bash sshuser && echo 'sshuser:password' | chpasswd
+# Create a directory for tmate logs (optional).
+RUN mkdir -p /tmate/logs
 
-# Set the root password (optional)
-RUN echo 'root:root' | chpasswd
-
-# Expose the SSH port
+# Expose the default port used by tmate.
 EXPOSE 22
 
-# Start the SSH server
-CMD ["/usr/sbin/sshd", "-D"]
+# Command to run tmate.
+CMD ["tmate", "-F"]
